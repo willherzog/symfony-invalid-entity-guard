@@ -21,6 +21,9 @@ class WHInvalidEntityGuardBundle extends AbstractBundle
 	{
 		$definition->rootNode()
 			->children()
+				->booleanNode('enable')
+					->defaultTrue()
+				->end()
 				->arrayNode('exclude')
 					->scalarPrototype()->end()
 				->end()
@@ -30,14 +33,16 @@ class WHInvalidEntityGuardBundle extends AbstractBundle
 
 	public function loadExtension(array $config, ContainerConfigurator $container, ContainerBuilder $builder): void
 	{
-		$container->services()
-			->set('whinvalidentityguard.validator', InvalidEntityGuardValidator::class)
-				->decorate('validator')
-				->args([
-					service('whinvalidentityguard.validator.inner'),
-					service('doctrine'),
-					$config['exclude']
-				])
-		;
+		if( $config['enable'] ) {
+			$container->services()
+				->set('whinvalidentityguard.validator', InvalidEntityGuardValidator::class)
+					->decorate('validator')
+					->args([
+						service('whinvalidentityguard.validator.inner'),
+						service('doctrine'),
+						$config['exclude']
+					])
+			;
+		}
 	}
 }

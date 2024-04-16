@@ -56,3 +56,12 @@ wh_invalid_entity_guard:
     exclude:
         - App\Entity\MyEntityClassToExclude
 ```
+
+Additionally, if you need to disable this bundle entirely (e.g. for testing), you can do so as follows:
+
+```yaml
+# config/packages/wh_invalid_entity_guard.yaml
+
+wh_invalid_entity_guard:
+    enable: false
+```
