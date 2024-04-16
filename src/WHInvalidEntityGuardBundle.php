@@ -36,7 +36,7 @@ class WHInvalidEntityGuardBundle extends AbstractBundle
 		if( $config['enable'] ) {
 			$container->services()
 				->set('whinvalidentityguard.validator', InvalidEntityGuardValidator::class)
-					->decorate('validator')
+					->decorate('validator', null, 256)
 					->args([
 						service('whinvalidentityguard.validator.inner'),
 						service('doctrine'),
