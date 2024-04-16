@@ -15,7 +15,7 @@ use Symfony\Component\Validator\Validator\{ValidatorInterface,ContextualValidato
 
 /**
  * If ValidatorInterface::validate() is called with a Doctrine entity as its subject† and it returns a non-empty list of violations,
- * detach the subject entity from the associated EntityManager so that the invalid changes made to it will not be persisted.
+ * mark the subject entity as read-only in the associated EntityManager so that the invalid changes made to it will not be persisted.
  *
  * † OR the subject is a Symfony form and that form has a Doctrine entity as its data
  *
@@ -72,7 +72,7 @@ class InvalidEntityGuardValidator implements ValidatorInterface
 					$entityManager = $this->managerRegistry->getManagerForClass($objectClass);
 
 					if( ($entityManager instanceof EntityManagerInterface) && $entityManager->contains($maybeEntity) ) {
-						$entityManager->detach($maybeEntity);
+						$entityManager->getUnitOfWork()->markReadOnly($maybeEntity);
 					}
 				}
 			}
