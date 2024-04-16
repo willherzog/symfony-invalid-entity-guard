@@ -5,6 +5,7 @@ namespace WHSymfony\WHInvalidEntityGuardBundle\Validator;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Constraints\GroupSequence;
 use Symfony\Component\Validator\ConstraintViolationListInterface;
@@ -13,8 +14,10 @@ use Symfony\Component\Validator\Mapping\MetadataInterface;
 use Symfony\Component\Validator\Validator\{ValidatorInterface,ContextualValidatorInterface};
 
 /**
- * If ValidatorInterface::validate() is called with a Doctrine entity as its subject and it returns a non-empty list of violations,
+ * If ValidatorInterface::validate() is called with a Doctrine entity as its subject† and it returns a non-empty list of violations,
  * detach the subject entity from the associated EntityManager so that the invalid changes made to it will not be persisted.
+ *
+ * † OR the subject is a Symfony form and that form has a Doctrine entity as its data
  *
  * If the FQCN of the entity matches one of those configured to be excluded, however, the entity will not be detached.
  *
@@ -51,11 +54,27 @@ class InvalidEntityGuardValidator implements ValidatorInterface
 	{
 		$violations = $this->validator->validate($value, $constraints, $groups);
 
-		if( $violations->count() > 0 && is_object($value) && !in_array(get_class($value), $this->excludedEntities, true) ) {
-			$entityManager = $this->managerRegistry->getManagerForClass(get_class($value));
+		if( $violations->count() > 0 && is_object($value) ) {
+			if( $value instanceof FormInterface ) {
+				$formData = $value->getData();
 
-			if( ($entityManager instanceof EntityManagerInterface) && $entityManager->contains($value) ) {
-				$entityManager->detach($value);
+				if( is_object($formData) ) {
+					$maybeEntity = $formData;
+				}
+			} else {
+				$maybeEntity = $value;
+			}
+
+			if( isset($maybeEntity) ) {
+				$objectClass = get_class($maybeEntity);
+
+				if( !in_array($objectClass, $this->excludedEntities, true) ) {
+					$entityManager = $this->managerRegistry->getManagerForClass($objectClass);
+
+					if( ($entityManager instanceof EntityManagerInterface) && $entityManager->contains($maybeEntity) ) {
+						$entityManager->detach($maybeEntity);
+					}
+				}
 			}
 		}
 
