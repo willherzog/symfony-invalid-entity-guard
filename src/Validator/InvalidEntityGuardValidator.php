@@ -19,7 +19,7 @@ use Symfony\Component\Validator\Validator\{ValidatorInterface,ContextualValidato
  *
  * † OR the subject is a Symfony form and that form has a Doctrine entity as its data
  *
- * If the FQCN of the entity matches one of those configured to be excluded, however, the entity will not be detached.
+ * If the FQCN of the entity matches one of those configured to be excluded, however, the entity will be left as-is.
  *
  * @author Will Herzog <willherzog@gmail.com>
  */
