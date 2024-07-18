@@ -3,7 +3,6 @@
 namespace WHSymfony\WHInvalidEntityGuardBundle\Validator;
 
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\InvalidArgumentException;
 use Doctrine\Persistence\ManagerRegistry;
 
 use Symfony\Component\Form\FormInterface;
@@ -73,16 +72,7 @@ class InvalidEntityGuardValidator implements ValidatorInterface
 					$entityManager = $this->managerRegistry->getManagerForClass($objectClass);
 
 					if( ($entityManager instanceof EntityManagerInterface) && $entityManager->contains($maybeEntity) ) {
-						try {
-							$entityManager->getUnitOfWork()->markReadOnly($maybeEntity);
-						} catch( InvalidArgumentException $e ) {
-							// Nothing.
-							// Checking either EntityManagerInterface::contains() or
-							// EntityManagerInterface::getUnitOfWork()::isInIdentityMap()
-							// *should* be sufficient to avoid this exception, but in
-							// certain circumstances neither of them do, in which case
-							// it's preferable to simply catch it and move on.
-						}
+						$entityManager->getUnitOfWork()->markReadOnly($maybeEntity);
 					}
 				}
 			}
