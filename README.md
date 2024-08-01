@@ -1,5 +1,5 @@
 # WHInvalidEntityGuardBundle
- A decorator for the Symfony validator service to prevent an entity which has failed validation from being persisted in its current state.
+ A decorator for the Symfony validator service to prevent a Doctrine entity which has failed validation from being persisted in its current state.
 
 
 Installation

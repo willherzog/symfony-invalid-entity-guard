@@ -1,6 +1,6 @@
 {
 	"name": "willherzog/symfony-invalid-entity-guard",
-	"description": "A decorator for the Symfony validator service to prevent an entity which has failed validation from being persisted in its current state.",
+	"description": "A decorator for the Symfony validator service to prevent a Doctrine entity which has failed validation from being persisted in its current state.",
     "type": "symfony-bundle",
     "license": "MIT",
     "authors": [
